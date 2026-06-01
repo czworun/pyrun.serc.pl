@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>PYRUN – Jednostka rozliczenia między ciałem a systemem</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #F5F0E8;  /* biel papieru */
+            font-family: 'Helvetica', 'Arial', 'sans-serif';
+            color: #0A0A0A;
+            line-height: 1.3;
+            padding: 2rem 1.5rem;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #F5F0E8;
+        }
+
+        /* nagłówek */
+        .header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 4px solid #0A0A0A;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+        .title {
+            font-size: clamp(3rem, 12vw, 5rem);
+            font-weight: bold;
+            letter-spacing: -0.02em;
+            line-height: 1;
+        }
+        .sub {
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #555555;
+            letter-spacing: 0.5px;
+        }
+        .conversion {
+            text-align: right;
+            border-left: 2px solid #0A0A0A;
+            padding-left: 1rem;
+        }
+        .conversion p {
+            margin-bottom: 0.5rem;
+        }
+        .conversion .small {
+            font-size: 0.75rem;
+            color: #555555;
+        }
+        .hr-thick {
+            height: 4px;
+            background: #0A0A0A;
+            margin: 1rem 0;
+        }
+        .hr-thin {
+            height: 1px;
+            background: #0A0A0A;
+            margin: 1rem 0;
+        }
+
+        /* dwie kolumny list */
+        .lists {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        .list-col {
+            flex: 1;
+            min-width: 260px;
+        }
+        .list-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 0.2rem;
+        }
+        .list-sub {
+            font-size: 0.6rem;
+            color: #555555;
+            letter-spacing: 0.5px;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #ccc;
+            display: inline-block;
+        }
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 0.3rem 0;
+            border-bottom: 0.5px dotted #ccc;
+            font-size: 0.75rem;
+        }
+        .list-item strong {
+            font-weight: 600;
+        }
+        .ratio {
+            font-family: monospace;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        .red {
+            color: #B02518;
+        }
+        .green {
+            color: #164A24;
+        }
+
+        /* trzy filary */
+        .three-col {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .pillar {
+            flex: 1;
+            min-width: 200px;
+        }
+        .pillar h3 {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        .pillar p {
+            font-size: 0.8rem;
+            color: #222;
+        }
+
+        /* lokalne działania */
+        .local-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin: 1.5rem 0 1rem;
+        }
+        .action-list {
+            list-style: none;
+            margin-left: 0;
+        }
+        .action-list li {
+            margin-bottom: 0.6rem;
+            font-size: 0.85rem;
+            position: relative;
+            padding-left: 1.2rem;
+        }
+        .action-list li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #0A0A0A;
+        }
+
+        /* stopka */
+        .footer {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 4px solid #0A0A0A;
+        }
+        .footer-left {
+            font-size: 1.4rem;
+            font-weight: bold;
+            line-height: 1.2;
+        }
+        .footer-left .italic {
+            font-size: 0.85rem;
+            font-style: italic;
+            font-weight: normal;
+            margin-top: 0.5rem;
+        }
+        .footer-right {
+            text-align: right;
+            font-size: 0.75rem;
+            color: #555555;
+        }
+        .footer-right .domain {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #0A0A0A;
+            margin-top: 0.3rem;
+        }
+        @media (max-width: 700px) {
+            body {
+                padding: 1rem;
+            }
+            .conversion {
+                text-align: left;
+                border-left: none;
+                padding-left: 0;
+                margin-top: 0.5rem;
+            }
+            .footer-left {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div>
+            <div class="title">PYRUN</div>
+            <div class="sub">JEDNOSTKA ROZLICZENIA MIĘDZY CIAŁEM A SYSTEMEM</div>
+        </div>
+        <div class="conversion">
+            <p><strong>1 pyrun = 125 Wh</strong><br><span class="small">koszt Twojego istnienia przez 1 godzinę</span></p>
+            <p><strong>1 piorun = 2222 pyr</strong><br><span class="small">energia życia 100 ludzi przez jeden dzień</span></p>
+        </div>
+    </div>
+
+    <div class="lists">
+        <!-- CZARNA LISTA -->
+        <div class="list-col">
+            <div class="list-title">CZARNA LISTA</div>
+            <div class="list-sub">SEKTORY ZABIERAJĄCE WIĘCEJ PYRUNÓW NIŻ DAJĄ</div>
+            <div class="list-item"><span>Przemysł zbrojeniowy</span><span class="ratio red">∞ : 1</span></div>
+            <div class="list-item"><span>Bitcoin (Proof-of-Work)</span><span class="ratio red">150 000 : 1</span></div>
+            <div class="list-item"><span>HFT / trading algorytmiczny</span><span class="ratio red">10 000 : 1</span></div>
+            <div class="list-item"><span>Reklama cyfrowa / surveillance</span><span class="ratio red">5 000 : 1</span></div>
+            <div class="list-item"><span>Fast fashion</span><span class="ratio red">3 000 : 1</span></div>
+            <div class="list-item"><span>Hazard online</span><span class="ratio red">2 000 : 1</span></div>
+            <div class="list-item"><span>Lobbing korporacyjny</span><span class="ratio red">1 500 : 1</span></div>
+            <div class="list-item"><span>Jednorazowy plastik</span><span class="ratio red">1 000 : 1</span></div>
+            <div class="list-item"><span>Marnowanie żywności</span><span class="ratio red">800 : 1</span></div>
+            <div class="list-item"><span>Prywatne loty odrzutowcem</span><span class="ratio red">600 : 1</span></div>
+        </div>
+        <!-- ZIELONA LISTA -->
+        <div class="list-col">
+            <div class="list-title" style="color:#164A24;">ZIELONA LISTA</div>
+            <div class="list-sub">SEKTORY MNOŻĄCE LUDZKIE PYRUNY</div>
+            <div class="list-item"><span>Karmienie piersią</span><span class="ratio green">∞ : 1</span></div>
+            <div class="list-item"><span>Sen (regeneracja całego systemu)</span><span class="ratio green">1 000 : 1</span></div>
+            <div class="list-item"><span>Ogrodnictwo przydomowe</span><span class="ratio green">500 : 1</span></div>
+            <div class="list-item"><span><strong>Seks z ukochanym partnerem</strong></span><span class="ratio green"><strong>500 : 1</strong></span></div>
+            <div class="list-item"><span>Opieka paliatywna / hospicja</span><span class="ratio green">400 : 1</span></div>
+            <div class="list-item"><span>Edukacja bezpośrednia</span><span class="ratio green">300 : 1</span></div>
+            <div class="list-item"><span>Medycyna pierwszego kontaktu</span><span class="ratio green">250 : 1</span></div>
+            <div class="list-item"><span>Biblioteki publiczne</span><span class="ratio green">200 : 1</span></div>
+            <div class="list-item"><span>Energia słoneczna / wiatrowa (po amortyzacji)</span><span class="ratio green">150 : 1</span></div>
+            <div class="list-item"><span>Fermentacja / przetwory</span><span class="ratio green">100 : 1</span></div>
+            <div class="list-item"><span>Opieka sąsiedzka / wolontariat</span><span class="ratio green">80 : 1</span></div>
+        </div>
+    </div>
+
+    <div class="hr-thin"></div>
+    <div style="font-size:0.7rem; font-weight:bold; color:#555;">PROPONUJEMY</div>
+    <div class="three-col">
+        <div class="pillar">
+            <h3>Nie nową walutę</h3>
+            <p>Nową miarę. Każda struktura może obliczyć swój współczynnik antyrezonansu – ile energii zabiera, a ile oddaje ludzkiemu istnieniu.</p>
+        </div>
+        <div class="pillar">
+            <h3>Podatek w piorunach</h3>
+            <p>Czarna lista zasila zieloną. Hospicja, ogrody społeczne, biblioteki. Bez rajów podatkowych – fizyka metabolizmu jest wszędzie taka sama.</p>
+        </div>
+        <div class="pillar">
+            <h3>Cel: przesiadka</h3>
+            <p>Nie kara, lecz ewolucja. Korporacje stają przed wyborem: transformacja modelu albo podatek w piorunach.</p>
+        </div>
+    </div>
+    <div class="hr-thin"></div>
+
+    <div class="local-title">CO MOŻESZ ZROBIĆ DZIŚ W ŁODZI</div>
+    <ul class="action-list">
+        <li>Oblicz swój bazowy bilans pyrunowy (125 Wh na godzinę istnienia).</li>
+        <li>Zaproponuj radzie osiedla utworzenie ogrodu społecznego liczonego w pyrunach.</li>
+        <li>Jeśli prowadzisz firmę – oblicz AR i wesprzyj lokalne hospicjum lub bibliotekę.</li>
+        <li>Wydrukuj i powieś ten manifest na kolejnym słupie w tym mieście.</li>
+    </ul>
+
+    <div class="footer">
+        <div class="footer-left">
+            Pyrun nie negocjuje.<br>Pyrun mierzy.
+            <div class="italic">Nie wymaga podpisu. Wymaga oddechu.</div>
+        </div>
+        <div class="footer-right">
+            Fundacja Punkt Zerowy 4-SERC<br>
+            Łódź, 1 czerwca 2026<br>
+            <div class="domain">pyrun.serc.pl</div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
